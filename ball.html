@@ -1,0 +1,208 @@
+<!doctype html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <style>
+    #gate {
+      cursor: pointer;
+      margin-bottom: 100px;
+      width: 500px;
+      /*height: 46px;*/
+      z-index: 100;
+    }
+
+    .ball {
+      cursor: pointer;
+      width: 60px;
+      height: 60px;
+      z-index: 1;
+    }
+  </style>
+  <script>
+
+    function ballMove(event) {
+      let currentDroppable = null;
+
+      let shiftX = event.clientX - event.target.getBoundingClientRect().left;
+      let shiftY = event.clientY - event.target.getBoundingClientRect().top;
+
+      event.target.style.position = 'absolute';
+      event.target.style.zIndex = 1;
+      document.body.append(ball);
+
+      moveAt(event.pageX, event.pageY);
+
+      function moveAt(pageX, pageY) {
+        event.target.style.left = pageX - shiftX + 'px';
+        event.target.style.top = pageY - shiftY + 'px';
+      }
+
+      function onMouseMove(event) {
+        moveAt(event.pageX, event.pageY);
+
+        event.target.hidden = true;
+        let elemBelow = document.elementFromPoint(event.clientX, event.clientY);
+        event.target.hidden = false;
+
+        // var subNodes = document.querySelectorAll("#ball > *");
+        // console.log(elemBelow);
+
+        if (!elemBelow) { return; }
+
+        let droppableBelow = elemBelow.closest('.droppable');
+        // console.log(droppableBelow);
+        // console.log(currentDroppable);
+
+        if (currentDroppable != droppableBelow) {
+          if (currentDroppable) {
+            // null when we were not over a droppable before this event
+            leaveDroppable(currentDroppable);
+          }
+          currentDroppable = droppableBelow;
+
+          if (currentDroppable) {
+            // null if we're not coming over a droppable now
+            // (maybe just left the droppable)
+            enterDroppable(currentDroppable);
+          }
+        }
+      }
+
+      document.addEventListener('mousemove', onMouseMove);
+
+      event.target.onmouseup = function() {
+        document.removeEventListener('mousemove', onMouseMove);
+        event.target.onmouseup = null;
+      };
+
+      event.target.ondragstart = function() { return false; };
+    };
+
+    function enterDroppable(elem) {
+      // elem.style.background = 'pink';
+      countIn();
+    }
+
+    function leaveDroppable(elem) {
+      elem.style.background = '';
+    }
+
+    var myTimer;
+    function clock() {
+      let ball = document.getElementById("ball");
+      let ball2 = document.getElementById("ball2");
+      let ball3 = document.getElementById("ball3");
+      let ball4 = document.getElementById("ball4");
+      let ball5 = document.getElementById("ball5");
+      let ball6 = document.getElementById("ball6");
+      let ball7 = document.getElementById("ball7");
+      let ball8 = document.getElementById("ball8");
+      let ball9 = document.getElementById("ball9");
+      let ball10 = document.getElementById("ball10");
+
+      ball.onmousedown = ballMove;
+      ball2.onmousedown = ballMove;
+      ball3.onmousedown = ballMove;
+      ball4.onmousedown = ballMove;
+      ball5.onmousedown = ballMove;
+      ball6.onmousedown = ballMove;
+      ball7.onmousedown = ballMove;
+      ball8.onmousedown = ballMove;
+      ball9.onmousedown = ballMove;
+      ball10.onmousedown = ballMove;
+
+      if (myTimer) {
+        clearInterval(myTimer);
+        document.getElementById("czas").innerHTML = 0;
+      }
+
+      myTimer = setInterval(myClock, 1000);
+      var c = 0;
+
+      function myClock() {
+        document.getElementById("czas").innerHTML = ++c;
+        if (c == 0) {
+          clearInterval(myTimer);
+        }
+      }
+    }
+
+    function stop() {
+      clearInterval(myTimer);
+      countIn();
+    }
+
+    function countIn() {
+      let ball = document.getElementById("ball");
+      let ball2 = document.getElementById("ball2");
+      let ball3 = document.getElementById("ball3");
+      let ball4 = document.getElementById("ball4");
+      let ball5 = document.getElementById("ball5");
+      let ball6 = document.getElementById("ball6");
+      let ball7 = document.getElementById("ball7");
+      let ball8 = document.getElementById("ball8");
+      let ball9 = document.getElementById("ball9");
+      let ball10 = document.getElementById("ball10");
+      let wkoszyku = document.getElementById("w-koszyku");
+      let max = document.getElementById("max");
+
+      function addIfIn(item) {
+        y = item.getBoundingClientRect().top;
+        x = item.getBoundingClientRect().left;
+        item.hidden = true;
+        elem = document.elementFromPoint(x, y)
+        item.hidden = false;
+        if (!elem) return;
+        droppableBelow = elem.closest('.droppable');
+
+        if (droppableBelow) {
+          wkoszyku.innerHTML = parseInt(wkoszyku.innerHTML) + 1;
+
+          if (parseInt(wkoszyku.innerHTML) > parseInt(max.innerHTML)) {
+            max.innerHTML = parseInt(wkoszyku.innerHTML);
+          }
+        }
+      }
+
+      wkoszyku.innerHTML = 0;
+      addIfIn(ball);
+      addIfIn(ball2);
+      addIfIn(ball3);
+      addIfIn(ball4);
+      addIfIn(ball5);
+      addIfIn(ball6);
+      addIfIn(ball7);
+      addIfIn(ball8);
+      addIfIn(ball9);
+      addIfIn(ball10);
+    }
+  </script>
+</head>
+
+<body>
+  <button onclick="clock();">Start</button>
+  <button onclick="stop();">Koniec</button>
+  <br />
+  Czas: <span id="czas">0</span><br >
+  Max: <span id="max">0</span><br >
+  W koszyku: <span id="w-koszyku">0</span>
+
+  <br /><br />
+
+  <img src="koszyk.png" id="gate" class="droppable">
+  <br /><br /><br />
+  <img src="ball.png" id="ball" class="ball">
+  <img src="ball.png" id="ball2" class="ball">
+  <img src="ball.png" id="ball3" class="ball">
+  <img src="ball.png" id="ball4" class="ball">
+  <img src="ball.png" id="ball5" class="ball">
+  <br /><br />
+  <img src="ball.png" id="ball6" class="ball">
+  <img src="ball.png" id="ball7" class="ball">
+  <img src="ball.png" id="ball8" class="ball">
+  <img src="ball.png" id="ball9" class="ball">
+  <img src="ball.png" id="ball10" class="ball">
+
+</body>
+</html>

@@ -1,0 +1,645 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="/docs/4.0/assets/img/favicons/favicon.ico">
+    <title>Ankieta</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <style>
+      .container {
+        max-width: 960px;
+      }
+
+      .lh-condensed { line-height: 1.25; }
+
+      #gate {
+        cursor: pointer;
+        margin-bottom: 100px;
+        width: 500px;
+        z-index: 100;
+      }
+
+      .ball {
+        cursor: pointer;
+        width: 60px;
+        height: 60px;
+        z-index: 1;
+      }
+
+      .ball-box {
+        width: 60px;
+        height: 60px;
+      }
+      .left {
+        float: left;
+      }
+    </style>
+    <script>
+
+      function ballMove(event) {
+        let currentDroppable = null;
+
+        let shiftX = event.clientX - event.target.getBoundingClientRect().left;
+        let shiftY = event.clientY - event.target.getBoundingClientRect().top;
+
+        event.target.style.position = 'absolute';
+        event.target.style.zIndex = 1000;
+        document.body.append(event.target);
+
+        moveAt(event.pageX, event.pageY);
+
+        function moveAt(pageX, pageY) {
+          event.target.style.left = pageX - shiftX + 'px';
+          event.target.style.top = pageY - shiftY + 'px';
+        }
+
+        function onMouseMove(event) {
+          moveAt(event.pageX, event.pageY);
+
+          event.target.hidden = true;
+          let elemBelow = document.elementFromPoint(event.clientX, event.clientY);
+          event.target.hidden = false;
+
+          if (!elemBelow) { return; }
+
+          let droppableBelow = elemBelow.closest('.droppable');
+
+          if (currentDroppable != droppableBelow) {
+            if (currentDroppable) {
+              leaveDroppable(currentDroppable);
+            }
+            currentDroppable = droppableBelow;
+
+            if (currentDroppable) {
+              enterDroppable(currentDroppable);
+            }
+          }
+        }
+
+        document.addEventListener('mousemove', onMouseMove);
+
+        event.target.onmouseup = function() {
+          document.removeEventListener('mousemove', onMouseMove);
+          event.target.onmouseup = null;
+        };
+
+        event.target.ondragstart = function() { return false; };
+      };
+
+      function enterDroppable(elem) {
+        countIn();
+      }
+
+      function leaveDroppable(elem) {
+        elem.style.background = '';
+      }
+
+      var myTimer;
+      function clock() {
+        let ball = document.getElementById("ball");
+        let ball2 = document.getElementById("ball2");
+        let ball3 = document.getElementById("ball3");
+        let ball4 = document.getElementById("ball4");
+        let ball5 = document.getElementById("ball5");
+        let ball6 = document.getElementById("ball6");
+        let ball7 = document.getElementById("ball7");
+        let ball8 = document.getElementById("ball8");
+        let ball9 = document.getElementById("ball9");
+        let ball10 = document.getElementById("ball10");
+
+        ball.onmousedown = ballMove;
+        ball2.onmousedown = ballMove;
+        ball3.onmousedown = ballMove;
+        ball4.onmousedown = ballMove;
+        ball5.onmousedown = ballMove;
+        ball6.onmousedown = ballMove;
+        ball7.onmousedown = ballMove;
+        ball8.onmousedown = ballMove;
+        ball9.onmousedown = ballMove;
+        ball10.onmousedown = ballMove;
+
+        if (myTimer) {
+          clearInterval(myTimer);
+          document.getElementById("czas").innerHTML = 0;
+        }
+
+        myTimer = setInterval(myClock, 1000);
+        var c = 0;
+
+        function myClock() {
+          document.getElementById("czas").innerHTML = ++c;
+          if (c == 0) {
+            clearInterval(myTimer);
+          }
+        }
+      }
+
+      function stop() {
+        clearInterval(myTimer);
+        countIn();
+      }
+
+      function countIn() {
+        let ball = document.getElementById("ball");
+        let ball2 = document.getElementById("ball2");
+        let ball3 = document.getElementById("ball3");
+        let ball4 = document.getElementById("ball4");
+        let ball5 = document.getElementById("ball5");
+        let ball6 = document.getElementById("ball6");
+        let ball7 = document.getElementById("ball7");
+        let ball8 = document.getElementById("ball8");
+        let ball9 = document.getElementById("ball9");
+        let ball10 = document.getElementById("ball10");
+        let wkoszyku = document.getElementById("w-koszyku");
+        let max = document.getElementById("max");
+
+        function addIfIn(item) {
+          y = item.getBoundingClientRect().top;
+          x = item.getBoundingClientRect().left;
+          item.hidden = true;
+          elem = document.elementFromPoint(x, y)
+          item.hidden = false;
+          if (!elem) return;
+          droppableBelow = elem.closest('.droppable');
+
+          if (droppableBelow) {
+            wkoszyku.innerHTML = parseInt(wkoszyku.innerHTML) + 1;
+
+            if (parseInt(wkoszyku.innerHTML) > parseInt(max.innerHTML)) {
+              max.innerHTML = parseInt(wkoszyku.innerHTML);
+            }
+          }
+        }
+
+        wkoszyku.innerHTML = 0;
+        addIfIn(ball);
+        addIfIn(ball2);
+        addIfIn(ball3);
+        addIfIn(ball4);
+        addIfIn(ball5);
+        addIfIn(ball6);
+        addIfIn(ball7);
+        addIfIn(ball8);
+        addIfIn(ball9);
+        addIfIn(ball10);
+      }
+    </script>
+  </head>
+
+  <body class="bg-light">
+    <div class="container">
+      <div class="py-5 text-center">
+        <img class="d-block mx-auto mb-4" src="https://getbootstrap.com/docs/4.0/assets/brand/bootstrap-solid.svg" alt="" width="72" height="72">
+        <h2>Ankieta</h2>
+        <p class="lead">
+          Badanie dotyczy poziomu zaangażowania pośród młodych dorosłych. Przypomnij sobie, w jakich obszarach aktualnie realizujesz swoją aktywność. W tym badaniu skoncentrujemy się szczególnie na aktywności zawodowej.
+        </p>
+      </div>
+
+      <div class="row">
+        <div class="col-md-2 order-md-1">
+        </div>
+        <div class="col-md-8 order-md-2">
+          <h4 class="mb-3">Badanie ankietowe</h4>
+          <p>
+            Przeczytaj poniższe pytania i udziel na nie odpowiedzi, które najbardziej ciebie opisują. Przy niektórych punktach należy zaznaczyć swój wybór, w innych wpisać swoją odpowiedź w okno tekstowe.
+          </p>
+
+          <form class="needs-validation" novalidate>
+            <hr class="mb-4">
+<!--             <div class="row">
+              <div class="col-md-6 mb-3">
+                <label for="firstName">First name</label>
+                <input type="text" class="form-control" id="firstName" placeholder="" value="" required>
+                <div class="invalid-feedback">
+                  Valid first name is required.
+                </div>
+              </div>
+              <div class="col-md-6 mb-3">
+                <label for="lastName">Last name</label>
+                <input type="text" class="form-control" id="lastName" placeholder="" value="" required>
+                <div class="invalid-feedback">
+                  Valid last name is required.
+                </div>
+              </div>
+            </div> -->
+
+<!--             <div class="mb-3">
+              <label for="username">Username</label>
+              <div class="input-group">
+                <div class="input-group-prepend">
+                  <span class="input-group-text">@</span>
+                </div>
+                <input type="text" class="form-control" id="username" placeholder="Username" required>
+                <div class="invalid-feedback" style="width: 100%;">
+                  Your username is required.
+                </div>
+              </div>
+            </div> -->
+
+            <div class="mb-3">
+              <label for="email">1. Email <span class="text-muted"></span></label>
+              <input type="email" class="form-control" id="email" placeholder="you@example.com">
+              <div class="invalid-feedback">
+                Please enter a valid email address for shipping updates.
+              </div>
+            </div>
+<!--
+            <div class="mb-3">
+              <label for="address">Address</label>
+              <input type="text" class="form-control" id="address" placeholder="1234 Main St" required>
+              <div class="invalid-feedback">
+                Please enter your shipping address.
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <label for="address2">Address 2 <span class="text-muted">(Optional)</span></label>
+              <input type="text" class="form-control" id="address2" placeholder="Apartment or suite">
+            </div> -->
+
+<!--             <div class="row">
+              <div class="col-md-5 mb-3">
+                <label for="country">Country</label>
+                <select class="custom-select d-block w-100" id="country" required>
+                  <option value="">Choose...</option>
+                  <option>United States</option>
+                </select>
+                <div class="invalid-feedback">
+                  Please select a valid country.
+                </div>
+              </div>
+              <div class="col-md-4 mb-3">
+                <label for="state">State</label>
+                <select class="custom-select d-block w-100" id="state" required>
+                  <option value="">Choose...</option>
+                  <option>California</option>
+                </select>
+                <div class="invalid-feedback">
+                  Please provide a valid state.
+                </div>
+              </div>
+              <div class="col-md-3 mb-3">
+                <label for="zip">Zip</label>
+                <input type="text" class="form-control" id="zip" placeholder="" required>
+                <div class="invalid-feedback">
+                  Zip code required.
+                </div>
+              </div>
+            </div>
+            <hr class="mb-4">
+            <div class="custom-control custom-checkbox">
+              <input type="checkbox" class="custom-control-input" id="same-address">
+              <label class="custom-control-label" for="same-address">Shipping address is the same as my billing address</label>
+            </div>
+            <div class="custom-control custom-checkbox">
+              <input type="checkbox" class="custom-control-input" id="save-info">
+              <label class="custom-control-label" for="save-info">Save this information for next time</label>
+            </div> -->
+            <!-- <hr class="mb-4"> -->
+
+            <!-- <h4 class="mb-3">Payment</h4> -->
+
+            <div class="d-block my-3">
+              <label for="credit">2. Płeć</label>
+              <div class="custom-control custom-radio">
+                <input id="credit" name="gender" type="radio" class="custom-control-input" checked required>
+                <label class="custom-control-label" for="credit">Kobieta</label>
+              </div>
+              <div class="custom-control custom-radio">
+                <input id="debit" name="gender" type="radio" class="custom-control-input" required>
+                <label class="custom-control-label" for="debit">Mężczyzna</label>
+              </div>
+              <div class="custom-control custom-radio">
+                <input id="paypal" name="gender" type="radio" class="custom-control-input" required>
+                <label class="custom-control-label" for="paypal">Inna</label>
+              </div>
+            </div>
+
+<!--             <div class="row">
+              <div class="col-md-6 mb-3">
+                <label for="cc-name">Name on card</label>
+                <input type="text" class="form-control" id="cc-name" placeholder="" required>
+                <small class="text-muted">Full name as displayed on card</small>
+                <div class="invalid-feedback">
+                  Name on card is required
+                </div>
+              </div>
+              <div class="col-md-6 mb-3">
+                <label for="cc-number">Credit card number</label>
+                <input type="text" class="form-control" id="cc-number" placeholder="" required>
+                <div class="invalid-feedback">
+                  Credit card number is required
+                </div>
+              </div>
+            </div> -->
+
+            <div class="row">
+              <div class="col-md-3 mb-3">
+                <label for="cc-expiration">3. Wiek</label>
+                <input type="text" class="form-control" id="cc-expiration" placeholder="" required>
+                <div class="invalid-feedback">
+                  Expiration date required
+                </div>
+              </div>
+            </div>
+            <div class="d-block my-3">
+              <label for="credit">4. Wykształcenie</label>
+              <div class="custom-control custom-radio">
+                <input id="credit" name="wyksztalcenie" type="radio" class="custom-control-input" checked required>
+                <label class="custom-control-label" for="credit">Podstawowe</label>
+              </div>
+              <div class="custom-control custom-radio">
+                <input id="debit" name="wyksztalcenie" type="radio" class="custom-control-input" required>
+                <label class="custom-control-label" for="debit">Zawodowe</label>
+              </div>
+              <div class="custom-control custom-radio">
+                <input id="paypal" name="wyksztalcenie" type="radio" class="custom-control-input" required>
+                <label class="custom-control-label" for="paypal">Średnie</label>
+              </div>
+              <div class="custom-control custom-radio">
+                <input id="paypal" name="wyksztalcenie" type="radio" class="custom-control-input" required>
+                <label class="custom-control-label" for="paypal">Wyższe</label>
+              </div>
+            </div>
+            <hr class="mb-4">
+            <button class="btn btn-primary btn-lg btn-block" type="submit">Wyślij</button>
+          </form>
+
+          <br /><br /><br /><br />
+
+          <h4 class="mb-3">Kwestionariusz</h4>
+          <form class="needs-validation" novalidate>
+            <p>
+              Poniżej znajdują się stwierdzenia dotyczące przekonań, postaw i planów odnoszących się do przyszłości.
+              Proszę przeczytać je uważnie i zakreślić odpowiedź najlepiej opisującą Pani/Pana osobę.
+              Proszę postarać się odpowiadać zgodnie z prawdą, pamiętając, że nie ma tutaj dobrych i złych odpowiedzi.
+            </p>
+            <hr class="mb-4">
+
+            <div class="row">
+              <div class="col-md-12 order-md-1">
+                <p>1. Wiem w jakim kierunku chcę podążyć w swoim życiu.</p>
+              </div>
+
+              <div class="col-md-2 order-md-2">
+                <div class="custom-control custom-radio">
+                  <center>
+                    <input id="q-1-a-1" name="question-1" type="radio" class="custom-control-input" checked required>
+                    <label class="custom-control-label" for="q-1-a-1">
+                      <br />1 <br />Zdecydowanie się nie zgadzam
+                    </label>
+                  </center>
+                </div>
+              </div>
+              <div class="col-md-2 order-md-3">
+                <div class="custom-control custom-radio">
+                  <center>
+                    <input id="q-1-a-2" name="question-1" type="radio" class="custom-control-input" required>
+                    <label class="custom-control-label" for="q-1-a-2">
+                      <br />2 <br />Raczej się nie zgadzam
+                    </label>
+                  </center>
+                </div>
+              </div>
+              <div class="col-md-2 order-md-4">
+                <div class="custom-control custom-radio">
+                  <center>
+                    <input id="q-1-a-3" name="question-1" type="radio" class="custom-control-input" required>
+                    <label class="custom-control-label" for="q-1-a-3">
+                      <br />3 <br />Trudno powiedzieć
+                    </label>
+                  </center>
+                </div>
+              </div>
+              <div class="col-md-2 order-md-5">
+                <div class="custom-control custom-radio">
+                  <center>
+                    <input id="q-1-a-4" name="question-1" type="radio" class="custom-control-input" required>
+                    <label class="custom-control-label" for="q-1-a-4">
+                      <br />4 <br />Raczej się zgadzam
+                    </label>
+                  </center>
+                </div>
+              </div>
+              <div class="col-md-2 order-md-6">
+                <div class="custom-control custom-radio">
+                  <center>
+                    <input id="q-1-a-5" name="question-1" type="radio" class="custom-control-input" required>
+                    <label class="custom-control-label" for="q-1-a-5">
+                      <br />5 <br />Zdecydowanie się zgadzam
+                    </label>
+                  </center>
+                </div>
+              </div>
+            </div>
+            <br /><hr class="mb-4">
+            <div class="row">
+              <div class="col-md-12 order-md-1">
+                <p>2. Mam jasną wizję swojej przyszłości.</p>
+              </div>
+
+              <div class="col-md-2 order-md-2">
+                <div class="custom-control custom-radio">
+                  <center>
+                    <input id="q-1-a-1" name="question-1" type="radio" class="custom-control-input" checked required>
+                    <label class="custom-control-label" for="q-1-a-1">
+                      <br />1 <br />Zdecydowanie się nie zgadzam
+                    </label>
+                  </center>
+                </div>
+              </div>
+              <div class="col-md-2 order-md-3">
+                <div class="custom-control custom-radio">
+                  <center>
+                    <input id="q-1-a-2" name="question-1" type="radio" class="custom-control-input" required>
+                    <label class="custom-control-label" for="q-1-a-2">
+                      <br />2 <br />Raczej się nie zgadzam
+                    </label>
+                  </center>
+                </div>
+              </div>
+              <div class="col-md-2 order-md-4">
+                <div class="custom-control custom-radio">
+                  <center>
+                    <input id="q-1-a-3" name="question-1" type="radio" class="custom-control-input" required>
+                    <label class="custom-control-label" for="q-1-a-3">
+                      <br />3 <br />Trudno powiedzieć
+                    </label>
+                  </center>
+                </div>
+              </div>
+              <div class="col-md-2 order-md-5">
+                <div class="custom-control custom-radio">
+                  <center>
+                    <input id="q-1-a-4" name="question-1" type="radio" class="custom-control-input" required>
+                    <label class="custom-control-label" for="q-1-a-4">
+                      <br />4 <br />Raczej się zgadzam
+                    </label>
+                  </center>
+                </div>
+              </div>
+              <div class="col-md-2 order-md-6">
+                <div class="custom-control custom-radio">
+                  <center>
+                    <input id="q-1-a-5" name="question-1" type="radio" class="custom-control-input" required>
+                    <label class="custom-control-label" for="q-1-a-5">
+                      <br />5 <br />Zdecydowanie się zgadzam
+                    </label>
+                  </center>
+                </div>
+              </div>
+            </div>
+
+            <br />
+            <hr class="mb-4">
+            <button class="btn btn-primary btn-lg btn-block" type="submit">Wyślij</button>
+          </form>
+
+          <br />
+          <br />
+          <h4 class="mb-3">Zadanie inwestycyjne</h4>
+          <p>
+            Masz do dyspozycji 10 żetonów, które symbolizują całą twoją energię życową, ile z nich inwestujesz aktualnie w rozwoj zawodowy?
+            Umieść odpowiednią ilość żetonów w koszyku. masz nieograniczoną ilość ruchów oraz czasu.
+            Jeśli chcesz zrobić przerwę w zadaniu, wciśnij pauzę.
+          </p>
+          <hr class="mb-4">
+
+          <div class="row">
+            <div class="col-md-12 order-md-1">
+                <center>
+                  <button onclick="clock();">Start</button>
+                  <button onclick="stop();">Koniec</button>
+                  <br />
+                  Czas: <span id="czas">0</span><br>
+                  Max: <span id="max">0</span><br>
+                  W koszyku: <span id="w-koszyku">0</span>
+
+                  <br /><br />
+                  <div class="ball-box left"><img src="ball.png" id="ball" class="ball"></div>
+                  <div class="ball-box left"><img src="ball.png" id="ball2" class="ball"></div>
+                  <div class="ball-box left"><img src="ball.png" id="ball3" class="ball"></div>
+                  <div class="ball-box left"><img src="ball.png" id="ball4" class="ball"></div>
+                  <div class="ball-box left"><img src="ball.png" id="ball5" class="ball"></div>
+                  <br /><br />
+                  <br /><br />
+                  <div class="ball-box left"><img src="ball.png" id="ball6" class="ball"></div>
+                  <div class="ball-box left"><img src="ball.png" id="ball7" class="ball"></div>
+                  <div class="ball-box left"><img src="ball.png" id="ball8" class="ball"></div>
+                  <div class="ball-box left"><img src="ball.png" id="ball9" class="ball"></div>
+                  <div class="ball-box left"><img src="ball.png" id="ball10" class="ball"></div>
+                  <br /><br /><br />
+                  <img src="koszyk.png" id="gate" class="droppable">
+                </center>
+            </div>
+          </div>
+          <br />
+          <hr class="mb-4">
+          <button class="btn btn-primary btn-lg btn-block" type="submit">Wyślij</button>
+
+          <br /><br /><br /><br />
+
+          <h4 class="mb-3">Pytania - Praca zawodowa</h4>
+          <form class="needs-validation" novalidate>
+            <p>
+              Ustosunkuj się do poniższych pytań umieszczając suwak w odpowiednim miejscu
+            </p>
+            <hr class="mb-4">
+            <br />
+
+            <p>
+              <label for="formControlRange">1. Jak silnie identyfikujesz się z zawodem, co do którego posiadasz kwalifikacje zawodowe?</label>
+            </p>
+            <div class="row">
+              <div class="col-md-2 order-md-1">Bardzo nisko</div>
+              <div class="col-md-9 order-md-2">
+                <input type="range" class="form-control-range" id="formControlRange">
+              </div>
+              <div class="col-md-1 order-md-3">Bardzo wysoko</div>
+            </div>
+            <br /><br />
+
+
+            <p>
+              <label for="formControlRange">2. Jak bardzo absorbuje Ciebie wykonywanie aktualnej pracy zawodowej?</label>
+            </p>
+            <div class="row">
+              <div class="col-md-2 order-md-1">Bardzo nisko</div>
+              <div class="col-md-9 order-md-2">
+                <input type="range" class="form-control-range" id="formControlRange">
+              </div>
+              <div class="col-md-1 order-md-3">Bardzo wysoko</div>
+            </div>
+            <br /><br />
+
+            <p>
+              <label for="formControlRange">3. Czy dopuszczasz zmianę aktualnie wykonywanej pracy zawodowej z własnego wyboru?</label>
+            </p>
+            <div class="row">
+              <div class="col-md-2 order-md-1">Bardzo nisko</div>
+              <div class="col-md-9 order-md-2">
+                <input type="range" class="form-control-range" id="formControlRange">
+              </div>
+              <div class="col-md-1 order-md-3">Bardzo wysoko</div>
+            </div>
+            <br /><br />
+
+            <p>
+              <label for="formControlRange">4. Czy dopuszczasz zmianę aktualnie posiadanych kwalifikacji zawodowych z własnego wyboru?</label>
+            </p>
+            <div class="row">
+              <div class="col-md-2 order-md-1">Bardzo nisko</div>
+              <div class="col-md-9 order-md-2">
+                <input type="range" class="form-control-range" id="formControlRange">
+              </div>
+              <div class="col-md-1 order-md-3">Bardzo wysoko</div>
+            </div>
+
+            <br />
+            <hr class="mb-4">
+            <button class="btn btn-primary btn-lg btn-block" type="submit">Wyślij</button>
+          </form>
+        </div>
+      </div>
+
+      <footer class="my-5 pt-5 text-muted text-center text-small">
+        <p class="mb-1">&copy; 2017-2020 Ankieta</p>
+        <ul class="list-inline"></ul>
+      </footer>
+    </div>
+
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+    <script>
+      // Example starter JavaScript for disabling form submissions if there are invalid fields
+      (function() {
+        'use strict';
+
+        window.addEventListener('load', function() {
+          // Fetch all the forms we want to apply custom Bootstrap validation styles to
+          var forms = document.getElementsByClassName('needs-validation');
+
+          // Loop over them and prevent submission
+          var validation = Array.prototype.filter.call(forms, function(form) {
+            form.addEventListener('submit', function(event) {
+              if (form.checkValidity() === false) {
+                event.preventDefault();
+                event.stopPropagation();
+              }
+              form.classList.add('was-validated');
+            }, false);
+          });
+        }, false);
+      })();
+    </script>
+  </body>
+</html>
